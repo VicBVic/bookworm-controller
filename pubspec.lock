@@ -104,6 +104,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_bluetooth_serial:
+    dependency: "direct main"
+    description:
+      name: flutter_bluetooth_serial
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.4.0"
   flutter_lints:
     dependency: "direct dev"
     description:
@@ -118,6 +125,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.7"
+  flutter_redux:
+    dependency: "direct main"
+    description:
+      name: flutter_redux
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.10.0"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -128,13 +142,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  google_mlkit_barcode_scanning:
-    dependency: "direct main"
-    description:
-      path: "../../google_mlkit_barcode_scanning"
-      relative: true
-    source: path
-    version: "0.4.0"
   google_mlkit_commons:
     dependency: transitive
     description:
@@ -142,82 +149,12 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.2.0"
-  google_mlkit_digital_ink_recognition:
-    dependency: "direct main"
-    description:
-      path: "../../google_mlkit_digital_ink_recognition"
-      relative: true
-    source: path
-    version: "0.5.0"
-  google_mlkit_entity_extraction:
-    dependency: "direct main"
-    description:
-      path: "../../google_mlkit_entity_extraction"
-      relative: true
-    source: path
-    version: "0.5.0"
-  google_mlkit_face_detection:
-    dependency: "direct main"
-    description:
-      path: "../../google_mlkit_face_detection"
-      relative: true
-    source: path
-    version: "0.4.0"
-  google_mlkit_image_labeling:
-    dependency: "direct main"
-    description:
-      path: "../../google_mlkit_image_labeling"
-      relative: true
-    source: path
-    version: "0.4.0"
-  google_mlkit_language_id:
-    dependency: "direct main"
-    description:
-      path: "../../google_mlkit_language_id"
-      relative: true
-    source: path
-    version: "0.4.0"
-  google_mlkit_object_detection:
-    dependency: "direct main"
-    description:
-      path: "../../google_mlkit_object_detection"
-      relative: true
-    source: path
-    version: "0.5.0"
-  google_mlkit_pose_detection:
-    dependency: "direct main"
-    description:
-      path: "../../google_mlkit_pose_detection"
-      relative: true
-    source: path
-    version: "0.4.0"
-  google_mlkit_selfie_segmentation:
-    dependency: "direct main"
-    description:
-      path: "../../google_mlkit_selfie_segmentation"
-      relative: true
-    source: path
-    version: "0.1.0"
-  google_mlkit_smart_reply:
-    dependency: "direct main"
-    description:
-      path: "../../google_mlkit_smart_reply"
-      relative: true
-    source: path
-    version: "0.4.0"
   google_mlkit_text_recognition:
     dependency: "direct main"
     description:
-      path: "../../google_mlkit_text_recognition"
-      relative: true
-    source: path
-    version: "0.4.0"
-  google_mlkit_translation:
-    dependency: "direct main"
-    description:
-      path: "../../google_mlkit_translation"
-      relative: true
-    source: path
+      name: google_mlkit_text_recognition
+      url: "https://pub.dartlang.org"
+    source: hosted
     version: "0.4.0"
   http:
     dependency: transitive
@@ -359,6 +296,41 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.7"
+  permission_handler:
+    dependency: "direct main"
+    description:
+      name: permission_handler
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "10.2.0"
+  permission_handler_android:
+    dependency: transitive
+    description:
+      name: permission_handler_android
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "10.2.0"
+  permission_handler_apple:
+    dependency: transitive
+    description:
+      name: permission_handler_apple
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "9.0.7"
+  permission_handler_platform_interface:
+    dependency: transitive
+    description:
+      name: permission_handler_platform_interface
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "3.9.0"
+  permission_handler_windows:
+    dependency: transitive
+    description:
+      name: permission_handler_windows
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.1.2"
   platform:
     dependency: transitive
     description:
@@ -387,6 +359,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.1.0"
+  redux:
+    dependency: transitive
+    description:
+      name: redux
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "5.0.0"
   sky_engine:
     dependency: transitive
     description: flutter

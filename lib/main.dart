@@ -1,33 +1,70 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
+import 'package:flutter_redux/flutter_redux.dart';
+import 'package:google_ml_kit_example/bluetooth_views/device_select_screen.dart';
+import 'package:google_ml_kit_example/util/show_view.dart';
+import 'error_menus/no_bluetooth_menu.dart';
+import 'redux/bluetooth_reducer.dart';
+import 'redux/bluetooth_state.dart';
+import 'redux/bluetooth_state_actions.dart';
 import 'vision_detector_views/text_detector_view.dart';
+import 'package:redux/redux.dart';
 
 List<CameraDescription> cameras = [];
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  Store<BluetoothAppState> store = Store<BluetoothAppState>(
+    bluetoothStateReducer,
+    initialState: BluetoothAppState(),
+    middleware: [
+      bluetoothStateBondedDevicesMiddleware,
+      bluetoothStateAskPermissionsMiddleware,
+    ],
+  );
 
   cameras = await availableCameras();
 
-  runApp(MyApp());
+  runApp(MyApp(store: store));
 }
 
 class MyApp extends StatelessWidget {
+  final Store<BluetoothAppState> store;
+  MyApp({required this.store});
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Home(),
+    store.dispatch(StartAskForPermissions(context));
+    return StoreProvider<BluetoothAppState>(
+      store: store,
+      child: MaterialApp(
+          title: 'MariusController',
+          theme: ThemeData(
+            primarySwatch: Colors.blue,
+          ),
+          //hemeMode: ThemeMode.Rdark,
+          debugShowCheckedModeBanner: false,
+          home: StoreBuilder<BluetoothAppState>(builder: (context, store) {
+            if (!store.state.permissionsAccepted) {
+              return NoBluetoothMenu();
+            }
+            return Home();
+          })),
     );
   }
 }
 
-class Home extends StatelessWidget {
+class Home extends StatefulWidget {
+  @override
+  State<Home> createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Google ML Kit Demo App'),
+        title: Text('Bookworm Controller'),
         centerTitle: true,
         elevation: 0,
       ),
@@ -36,19 +73,57 @@ class Home extends StatelessWidget {
           child: SingleChildScrollView(
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 16),
-              child: Column(
-                children: [
-                  ExpansionTile(
-                    title: const Text('Vision APIs'),
-                    children: [
-                      CustomCard('Text Recognition', TextRecognizerView()),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                ],
-              ),
+              child: StoreBuilder<BluetoothAppState>(builder: (context, store) {
+                return Column(
+                  children: [
+                    Row(
+                      children: [
+                        ElevatedButton(
+                          onPressed: () async {
+                            BluetoothConnection? connection = await showView(
+                                context,
+                                DeviceSelectScreen(
+                                  checkActivity: true,
+                                  connectionTimeLimit: Duration(seconds: 10),
+                                  title: Text("Choose a camera device:"),
+                                ));
+                            if (connection != null)
+                              store.dispatch(AddCamera(connection));
+                          },
+                          child: Text("Choose camera"),
+                        ),
+                        ElevatedButton(
+                          onPressed: () async {
+                            BluetoothConnection? connection = await showView(
+                                context,
+                                DeviceSelectScreen(
+                                  checkActivity: true,
+                                  connectionTimeLimit: Duration(seconds: 10),
+                                  title: Text("Choose a motor device:"),
+                                ));
+                            if (connection != null)
+                              store.dispatch(AddMotor(connection));
+                          },
+                          child: Text("Choose motor"),
+                        ),
+                      ],
+                    ),
+                    TextFormField(
+                      decoration:
+                          InputDecoration(hintText: "choose a book name"),
+                    ),
+                    ExpansionTile(
+                      title: const Text('Vision APIs'),
+                      children: [
+                        CustomCard('Text Recognition', TextRecognizerView()),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                  ],
+                );
+              }),
             ),
           ),
         ),
