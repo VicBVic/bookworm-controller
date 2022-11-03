@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:async/async.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 
@@ -13,7 +15,8 @@ class _ConnectionWithName {
 
 class BlueBroadcastHandler {
   Map<String, BluetoothConnection> _connectionBuffer = {};
-  Map<BluetoothConnection, StreamController<String>> _commandStreamBuffer = {};
+  Map<BluetoothConnection, StreamController<Uint8List>> _commandStreamBuffer =
+      {};
   Map<BluetoothConnection, Stream<_ConnectionWithName>> _alarmStreamBuffer = {};
   StreamGroup<_ConnectionWithName> _alarmStreamGroup = StreamGroup();
 
@@ -59,8 +62,8 @@ class BlueBroadcastHandler {
       _connectionBuffer[address] = result;
 
       if (_alarmStreamBuffer[result] == null) {
-        _alarmStreamBuffer[result] = getAlertStream(result, address);
-        _alarmStreamGroup.add(_alarmStreamBuffer[result]!);
+        //_alarmStreamBuffer[result] = getAlertStream(result, address);
+        //_alarmStreamGroup.add(_alarmStreamBuffer[result]!);
       }
 
       return result;
@@ -80,47 +83,26 @@ class BlueBroadcastHandler {
 
   final String alertString = "Alert";
 
-  StreamController<String> getCommandStreamController(
+  StreamController<Uint8List> getCommandStreamController(
       BluetoothConnection connection) {
     var commandStream = _commandStreamBuffer[connection];
 
     if (commandStream != null) return commandStream;
-    commandStream = StreamController<String>.broadcast();
+    commandStream = StreamController<Uint8List>.broadcast();
     commandStream.addStream(_bluetoothConnectionReceivedCommands(connection));
     _commandStreamBuffer[connection] = commandStream;
     return commandStream;
   }
 
-  Stream<String> _bluetoothConnectionReceivedCommands(
+  Stream<Uint8List> _bluetoothConnectionReceivedCommands(
       BluetoothConnection connection) async* {
-    String buffer = "";
     await for (final data in connection.input!.asBroadcastStream()) {
-      String received = utf8.decode(data, allowMalformed: true);
-      for (var a in received.split('')) {
-        buffer += a;
-        if (a == '\n') {
-          yield buffer;
-          buffer = '';
-        }
-      }
+      yield data;
     }
   }
 
   void printMessage(BluetoothConnection connection, String message) async {
     connection.output.add(ascii.encode(message));
-  }
-
-  Stream<_ConnectionWithName> getAlertStream(
-      BluetoothConnection connection, String name) async* {
-    await for (String command
-        in getCommandStreamController(connection).stream) {
-      command = command.replaceAll('\n', '');
-      command = command.replaceAll('\r', '');
-      if (command == alertString) {
-        print("alert found command $command ${command == alertString}");
-        yield _ConnectionWithName(connection, name);
-      }
-    }
   }
 
   BlueBroadcastHandler._internal();
