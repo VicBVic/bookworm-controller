@@ -20,6 +20,8 @@ dependencies:
   flutter_bluetooth_serial: ^0.4.0
   permission_handler: ^10.2.0
   flutter_redux: ^0.10.0
+  async: ^2.9.0
+  fuzzy: ^0.3.0
   
 
 dev_dependencies:

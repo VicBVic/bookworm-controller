@@ -2,7 +2,7 @@
 # See https://dart.dev/tools/pub/glossary#lockfile
 packages:
   async:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: async
       url: "https://pub.dartlang.org"
@@ -142,6 +142,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  fuzzy:
+    dependency: "direct main"
+    description:
+      name: fuzzy
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.3.0"
   google_mlkit_commons:
     dependency: transitive
     description:
@@ -212,6 +219,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.6.4"
+  latinize:
+    dependency: transitive
+    description:
+      name: latinize
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.0.2"
   lints:
     dependency: transitive
     description:
