@@ -27,6 +27,9 @@ BluetoothAppState bluetoothStateReducer(
   if (action is AddCamera) {
     state.camera = action.camera;
   }
+  if (action is SetLookingForBook) {
+    state.lookingForBook = action.lookingForBook;
+  }
   if (action is AddMotor) {
     state.motor = action.motor;
   }
@@ -62,14 +65,17 @@ void bluetoothStateAskPermissionsMiddleware(
     blue.requestEnable().then((value) async {
       //print("here2");
       bool accepted = (value ?? false) &&
-          (await Permission.location.request().then((value) {
+          (await Permission.location.request().then((value) async {
             if (value.isPermanentlyDenied) {
               print("ErrorAction sent");
               store.dispatch(ErrorAction());
             }
             print(
                 "here ${value.isGranted} ${value.isDenied} ${value.isPermanentlyDenied} ${value.isRestricted}");
-            return value.isGranted;
+            return value.isGranted &&
+                await Permission.bluetooth
+                    .request()
+                    .then((value) => value.isGranted);
           }));
       if (accepted) {
         store.dispatch(PermisionsAcceptedAction());

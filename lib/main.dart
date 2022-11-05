@@ -49,7 +49,7 @@ class MyApp extends StatelessWidget {
     return StoreProvider<BluetoothAppState>(
       store: store,
       child: MaterialApp(
-          title: 'MariusController',
+          title: 'BookwormController',
           theme: ThemeData(
             primarySwatch: Colors.blue,
           ),
@@ -95,9 +95,9 @@ class _HomeState extends State<Home> {
   int moveSeconds = 2;
   int moveTimes = 5;
 
-  List<String> imageFoundText = List.empty(growable: true);
+  double motorPower = 50;
 
-  String searchingFor = "";
+  List<String> imageFoundText = List.empty(growable: true);
   double foundConfidence = -1;
 
   @override
@@ -156,6 +156,19 @@ class _HomeState extends State<Home> {
                         ),
                       ],
                     ),
+                    Text("Motor power:"),
+                    Slider(
+                      value: motorPower,
+                      max: 100,
+                      min: 1,
+                      divisions: 100,
+                      label: motorPower.toString(),
+                      onChanged: (double value) {
+                        setState(() {
+                          motorPower = value;
+                        });
+                      },
+                    ),
                     Text("Pic Seconds:"),
                     Slider(
                       value: picSeconds.toDouble(),
@@ -202,9 +215,7 @@ class _HomeState extends State<Home> {
                       decoration:
                           InputDecoration(hintText: "choose a book name"),
                       onChanged: (value) {
-                        setState(() {
-                          searchingFor = value;
-                        });
+                        store.dispatch(SetLookingForBook(value));
                       },
                     ),
                     DropdownButton<int>(
@@ -248,8 +259,8 @@ class _HomeState extends State<Home> {
                         : Container(),
                     ElevatedButton(
                         onPressed: () async {
-                          final text =
-                              await runVisionAI("/bruh.jpeg", imageBytes!);
+                          final text = await runVisionAI(
+                              "/bruh.jpeg", imageBytes!, store);
                           setState(() {
                             imageFoundText.clear();
                             imageFoundText.add(text);
@@ -261,15 +272,7 @@ class _HomeState extends State<Home> {
                           runFullApp(store);
                         },
                         child: Text("Run Full App!")),
-                    ExpansionTile(
-                      title: const Text('Vision APIs'),
-                      children: [
-                        CustomCard('Text Recognition', TextRecognizerView()),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
+                    CustomCard('Test Text Recognition', TextRecognizerView()),
                   ],
                 );
               }),
@@ -300,7 +303,7 @@ class _HomeState extends State<Home> {
       Future<void> takePic = takeCameraPic(store, Duration(seconds: picSeconds))
           .then((value) async {
         print("maiking request!");
-        final text = await runVisionAI("/bruh$i.jpeg", imageBytes!);
+        final text = await runVisionAI("/bruh$i.jpeg", imageBytes!, store);
         print("finished request!");
         setState(() {
           imageFoundText.add(text);
@@ -316,7 +319,8 @@ class _HomeState extends State<Home> {
     }
   }
 
-  Future<String> runVisionAI(String imagePath, Uint8List bytes) async {
+  Future<String> runVisionAI(
+      String imagePath, Uint8List bytes, Store<BluetoothAppState> store) async {
     Directory appDocDir = await getApplicationDocumentsDirectory();
     //  UI.ImageDescriptor imd =
     //      await UI.ImageDescriptor.encoded(
@@ -331,9 +335,10 @@ class _HomeState extends State<Home> {
     img.writeAsBytesSync(bytes.toList());
     final recognizedText =
         await _textRecognizer.processImage(InputImage.fromFile(img));
-    if (searchingFor != "")
+    if (store.state.lookingForBook != "")
       setState(() {
-        foundConfidence = getFuzzyMatch(recognizedText.text, searchingFor);
+        foundConfidence =
+            getFuzzyMatch(recognizedText.text, store.state.lookingForBook);
       });
     return recognizedText.text;
   }
@@ -341,7 +346,8 @@ class _HomeState extends State<Home> {
   Future<void> turnMotor(
       Store<BluetoothAppState> store, bool left, Duration time) async {
     BluetoothConnection connection = store.state.motor!;
-    BlueBroadcastHandler.instance.printMessage(connection, left ? "<" : ">");
+    BlueBroadcastHandler.instance
+        .printMessage(connection, "${left ? "<" : ">"}$motorPower");
     await Future.delayed(time);
     print("stopped motor");
     BlueBroadcastHandler.instance.printMessage(connection, "V");

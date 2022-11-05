@@ -15,6 +15,11 @@ class AddCamera extends BluetoothStateAction {
   AddCamera(this.camera);
 }
 
+class SetLookingForBook extends BluetoothStateAction {
+  String lookingForBook;
+  SetLookingForBook(this.lookingForBook);
+}
+
 class AddMotor extends BluetoothStateAction {
   BluetoothConnection motor;
   AddMotor(this.motor);

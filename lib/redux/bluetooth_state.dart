@@ -4,7 +4,12 @@ class BluetoothAppState {
   BluetoothConnection? camera;
   BluetoothConnection? motor;
   List<BluetoothDevice> bondedDevices;
+  String lookingForBook;
   bool permissionsAccepted = false;
 
-  BluetoothAppState({this.camera, this.motor, this.bondedDevices = const []});
+  BluetoothAppState(
+      {this.camera,
+      this.motor,
+      this.bondedDevices = const [],
+      this.lookingForBook = ""});
 }
